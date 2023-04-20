@@ -39,23 +39,19 @@ def get_dealers_from_cf(url, **kwargs):
     else:
         json_result = get_request(url)
 
-    # print('json_result from line 31', json_result)    
-
     if json_result:
-        # Get the row list in JSON as dealers
         dealers = json_result["result"]
         # For each dealer object
-        for dealer_doc in dealers:
+        for dealer in dealers:
             # Get its content in `doc` object
-            # dealer_doc = dealer["doc"]
+            # dealer = dealer["doc"]
             # Create a CarDealer object with values in `doc` object
-            dealer_obj = CarDealer(address=dealer_doc["address"], city=dealer_doc["city"],
-                                   id=dealer_doc["id"], lat=dealer_doc["lat"], long=dealer_doc["long"], full_name=dealer_doc["full_name"],
-                                   state=dealer_doc["state"], st=dealer_doc["st"], zip=dealer_doc["zip"], short_name=dealer_doc["short_name"])
+            dealer_obj = CarDealer(address=dealer["address"], city=dealer["city"],
+                                   id=dealer["id"], lat=dealer["lat"], long=dealer["long"], full_name=dealer["full_name"],
+                                   state=dealer["state"], st=dealer["st"], zip=dealer["zip"], short_name=dealer["short_name"])
             results.append(dealer_obj)
 
     return results
-
 
 # Create a get_dealer_reviews_from_cf method to get reviews by dealer id from a cloud function
 # def get_dealer_by_id_from_cf(url, dealerId):

@@ -83,10 +83,14 @@ def registration_request(request):
     
 def get_dealerships(request):
     if request.method == "GET":
+        state = request.GET.get("state")
         context = {}
         # url = "https://us-south.functions.appdomain.cloud/api/v1/web/CD0201-xxx-nodesample123_Tyler/dealership-package/get-dealerships"
         url = "https://eu-de.functions.appdomain.cloud/api/v1/web/5d9b64c5-aca0-4edd-b439-d9fd483d8356/dealership-package/get-dealership.json"
-        dealerships = get_dealers_from_cf(url)
+        if state:
+            dealerships = get_dealers_from_cf(url, state=state)
+        else:
+            dealerships = get_dealers_from_cf(url)
         # Concat all dealer's short name
         dealer_names = ' '.join([dealer.short_name for dealer in dealerships])
         # return render(request, 'djangoapp/index.html', context)

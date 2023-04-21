@@ -3,12 +3,14 @@ from django.http import HttpResponseRedirect, HttpResponse
 from django.contrib.auth.models import User
 from django.shortcuts import get_object_or_404, render, redirect
 # from .models import related models
-from .restapis import get_request, get_dealers_from_cf
+from .restapis import get_request, get_dealers_from_cf, get_dealers_by_id_from_cf, post_request
 from django.contrib.auth import login, logout, authenticate
 from django.contrib import messages
 from datetime import datetime
 import logging
 import json
+from django.views.decorators.csrf import csrf_exempt
+
 
 # Get an instance of a logger
 logger = logging.getLogger(__name__)
@@ -128,10 +130,35 @@ def get_static(request):
 
 
 # Create a `get_dealer_details` view to render the reviews of a dealer
-# def get_dealer_details(request, dealer_id):
-# ...
+def get_dealer_details(request, dealer_id):
+    if request.method == "GET":
+        context = {}
+        # url = "https://us-south.functions.appdomain.cloud/api/v1/web/CD0201-xxx-nodesample123_Tyler/dealership-package/get-dealerships"
+        url = "https://eu-de.functions.appdomain.cloud/api/v1/web/5d9b64c5-aca0-4edd-b439-d9fd483d8356/dealership-package/get-reviews-python.json"
+        reviews = get_dealers_by_id_from_cf(url, dealerId=dealer_id)
+        # Concat all dealer's short name
+        result = ' '.join([review.sentiment for review in reviews])
+        # return render(request, 'djangoapp/index.html', context)
+        # context["dealership_list"] = dealerships
+        return HttpResponse(result)
 
 # Create a `add_review` view to submit a review
-# def add_review(request, dealer_id):
-# ...
-
+@csrf_exempt
+def add_review(request, dealer_id):
+    if request.method == "POST":
+    # and request.user.is_authenticated:
+        url = "https://eu-de.functions.appdomain.cloud/api/v1/web/5d9b64c5-aca0-4edd-b439-d9fd483d8356/dealership-package/store-review.json"
+        review={}
+        review["id"] = 1115
+        review["name"] = "Guusje"
+        review["purchase"] = False
+        review["purchase_date"] = datetime.utcnow().isoformat()
+        review["car_make"] = "Audi"
+        review["car_model"] = "A3"
+        review["car_year"] = 2018
+        review["dealership"] = 1
+        review["review"] = "This is a great car dealer"
+        json_payload={}
+        json_payload["review"] = review
+        result = post_request(url, json_payload, dealerId=dealer_id)
+        return HttpResponse(result)

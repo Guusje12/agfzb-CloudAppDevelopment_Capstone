@@ -49,8 +49,11 @@ def post_request(url, json_payload, **kwargs):
 def get_dealers_from_cf(url, **kwargs):
     results = []
     state = kwargs.get("state")
+    dealer_id = kwargs.get("dealer_id")
     if state:
         json_result = get_request(url, state=state)
+    elif dealer_id:
+        json_result = get_request(url, dealer_id=dealer_id)
     else:
         json_result = get_request(url)
 
@@ -72,7 +75,7 @@ def get_dealers_from_cf(url, **kwargs):
 # def get_dealer_by_id_from_cf(url, dealerId):
 # - Call get_request() with specified arguments
 # - Parse JSON results into a DealerView object list
-def get_dealers_by_id_from_cf(url, dealerId):
+def get_reviews_by_id_from_cf(url, dealerId):
     results = []
     json_result = get_request(url, dealerId=dealerId)
 
